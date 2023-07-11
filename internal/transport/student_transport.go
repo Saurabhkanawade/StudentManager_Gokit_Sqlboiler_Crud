@@ -20,6 +20,26 @@ func CreateStudentHttpHandler(endpoint endpoints.StudentEndpoint, router *mux.Ro
 			encodeStudent,
 		)).Methods(http.MethodPost)
 
+	router.Handle("/student/{studentId}",
+		httptransport.NewServer(
+			endpoint.GetStudentEndpoint,
+			decodeGetByIdStudent,
+			encodeStudent,
+		)).Methods(http.MethodGet)
+}
+
+func decodeGetByIdStudent(ctx context.Context, request2 *http.Request) (request interface{}, err error) {
+	vars := mux.Vars(request2)
+
+	studentId, ok := vars["studentId"]
+	if !ok {
+		logrus.Warnf("DecodeGetByStudent() - error while getting vars %v", ok)
+	}
+
+	res := endpoints.GetStudentByIdRequest{
+		StudentId: studentId,
+	}
+	return res, nil
 }
 
 func decodeCreateStudent(ctx context.Context, request2 *http.Request) (request interface{}, err error) {
@@ -51,6 +71,5 @@ func encodeStudent(ctx context.Context, writer http.ResponseWriter, response int
 		logrus.Warnf("Encode ()  - error %v", ok)
 	}
 	writer.Header().Set("Content-Type", "application/json; charset=utf-8")
-	writer.WriteHeader(http.StatusCreated)
 	return json.NewEncoder(writer).Encode(response)
 }

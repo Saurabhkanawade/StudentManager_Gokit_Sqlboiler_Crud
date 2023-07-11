@@ -8,17 +8,26 @@ import (
 type Student struct {
 	Id       null.String `json:"id"`
 	FullName null.String `json:"fullName"`
-	Email    null.String `json:"email"`
+	Gmail    null.String `json:"email"`
 	Phone    null.String `json:"phone"`
 }
 
-func (o Student) MakeDbModel() dbmodels.Student {
-	m := dbmodels.Student{}
+// ModelToDb it is like ModelToEntity use in update and create function / PUT & POST
+func (o Student) ModelToDb() dbmodels.Student {
+	dbmodel := dbmodels.Student{}
+	dbmodel.ID = o.Id.String
+	dbmodel.Fullname = o.FullName
+	dbmodel.Gmail = o.Gmail
+	dbmodel.Phone = o.Phone
+	return dbmodel
+}
 
-	m.ID = o.Id.String
-	m.Fullname = o.FullName
-	m.Gmail = o.Email
-	m.Phone = o.Phone
-
-	return m
+// DbToModel it is like EntityToModel use in Get and GetAll function / GET
+func DbToModel(student dbmodels.Student) Student {
+	model := Student{}
+	model.Id = null.StringFrom(student.ID)
+	model.FullName = student.Fullname
+	model.Gmail = student.Gmail
+	model.Phone = student.Phone
+	return model
 }
