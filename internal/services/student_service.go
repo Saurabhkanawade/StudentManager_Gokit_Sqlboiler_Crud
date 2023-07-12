@@ -52,7 +52,7 @@ func (s StudentServiceImpl) UpdateStudentById(ctx context.Context, studentId str
 	student.Gmail = updateStudent.Gmail
 	student.Phone = updateStudent.Phone
 
-	//conversion of the model
+	//conversion of the model to db
 
 	modelToDb := student.ModelToDb()
 

@@ -61,6 +61,7 @@ type UpdateStudentRequest struct {
 	Student   model.StudentUpdate
 }
 
+<<<<<<< HEAD
 type StudentRequest struct {
 	Id       null.String `json:"id"`
 	FullName null.String `json:"fullName"`
@@ -94,6 +95,20 @@ func MakeUpdateStudentEndpoint(s services.StudentService) endpoint.Endpoint {
 			Student: *UpdateStudent,
 		}
 		return updateStudentResponse, nil
+=======
+func MakeUpdateStudentEndpoint(s services.StudentService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+
+		//updateRequest, err := request.(UpdateStudentRequest)
+
+		//if !err {
+		//	logrus.Errorf("Endpoint () - updating the request of updae")
+		//}
+
+		//UpdateStudent, err := s.UpdateStudentById(ctx, updateRequest.StudentId, updateRequest.Student)
+
+		return nil, nil
+>>>>>>> origin/master
 	}
 }
 
