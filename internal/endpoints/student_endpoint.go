@@ -12,12 +12,77 @@ import (
 type StudentEndpoint struct {
 	CreateStudentEndpoint endpoint.Endpoint
 	GetStudentEndpoint    endpoint.Endpoint
+	GetAllStudentEndpoint endpoint.Endpoint
+	UpdateStudentEndpoint endpoint.Endpoint
+	DeleteStudentEndpoint endpoint.Endpoint
 }
 
 func MakeStudentEndpoints(s services.StudentService) StudentEndpoint {
 	return StudentEndpoint{
 		CreateStudentEndpoint: MakeCreateStudentEndpoint(s),
 		GetStudentEndpoint:    MakeGetStudentEndpoint(s),
+		GetAllStudentEndpoint: MakeGetAllStudentEndpoint(s),
+		UpdateStudentEndpoint: MakeUpdateStudentEndpoint(s),
+		DeleteStudentEndpoint: MakeDeleteStudentEndpoint(s),
+	}
+}
+
+type StudentDeleteRequest struct {
+	StudentId string
+}
+
+type DeleteStudentResponse struct {
+	StudentId string
+}
+
+func MakeDeleteStudentEndpoint(s services.StudentService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+		logrus.Info("Endpoint () - called the endpoint of the DeleteStudent.")
+		reqStudent, err := request.(StudentDeleteRequest)
+
+		if !err {
+			logrus.Warnf("Endpoint() - getStudent nill %v ", reqStudent)
+		}
+
+		deleteStudent, ok := s.DeleteStudentById(ctx, reqStudent.StudentId)
+		logrus.Infof("Endpoint () - deleted the student with studentId %v response is %v and return is %v", reqStudent.StudentId, deleteStudent, ok)
+
+		res := DeleteStudentResponse{
+			StudentId: deleteStudent,
+		}
+
+		return res, nil
+
+	}
+}
+
+type UpdateStudentRequest struct {
+	StudentId string
+	Student   model.StudentUpdate
+}
+
+func MakeUpdateStudentEndpoint(s services.StudentService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+
+		//updateRequest, err := request.(UpdateStudentRequest)
+
+		//if !err {
+		//	logrus.Errorf("Endpoint () - updating the request of updae")
+		//}
+
+		//UpdateStudent, err := s.UpdateStudentById(ctx, updateRequest.StudentId, updateRequest.Student)
+
+		return nil, nil
+	}
+}
+
+//swagger:model GetAllStudentResponse
+type GetAllStudentResponse struct {
+}
+
+func MakeGetAllStudentEndpoint(s services.StudentService) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
+		return nil, err
 	}
 }
 
@@ -35,7 +100,7 @@ type GetStudentByIdResponseBody struct {
 
 func MakeGetStudentEndpoint(s services.StudentService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		logrus.Info("Endpoint () - called the endpoint of the student")
+		logrus.Info("Endpoint () - called the endpoint of the GetStudent")
 
 		getStudent, err := request.(GetStudentByIdRequest)
 		if !err {
@@ -53,7 +118,6 @@ func MakeGetStudentEndpoint(s services.StudentService) endpoint.Endpoint {
 		Body := GetStudentByIdResponseBody{
 			Student: student,
 		}
-		logrus.Debugf("body", Body)
 		return Body.Student, nil
 	}
 }
@@ -83,11 +147,11 @@ type createStudentResponse struct {
 
 func MakeCreateStudentEndpoint(s services.StudentService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		logrus.Info("Endpoint () - called the endpoint of the student")
+		logrus.Info("Endpoint () - called the endpoint of the CreateStudent")
 
 		req, err := request.(CreateStudentRequest)
 		if !err {
-			logrus.Warnf("Endpoint () - nill request :", req)
+			logrus.Warnf("Endpoint () - nill request %v:", req)
 		}
 		student := model.Student{
 			Id:       req.Student.Id,
@@ -98,7 +162,7 @@ func MakeCreateStudentEndpoint(s services.StudentService) endpoint.Endpoint {
 		serviceReq, errService := s.CreateStudent(ctx, student)
 
 		if errService != nil {
-			logrus.Warnf("Endpoint () - requesting the service with ", serviceReq)
+			logrus.Warnf("Endpoint () - requesting the service with %v", serviceReq)
 		}
 
 		res := createStudentResponse{

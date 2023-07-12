@@ -51,6 +51,7 @@ func (con DbConnection) PingDB() error {
 }
 
 func InitDatabase(config DbConfig) (DbConnection, error) {
+
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", config.Host, config.Port, config.User, config.Pass, config.DbName)
 
 	connection := DbConnection{}

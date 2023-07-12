@@ -31,3 +31,9 @@ func DbToModel(student dbmodels.Student) Student {
 	model.Phone = student.Phone
 	return model
 }
+
+type StudentUpdate struct {
+	FullName null.String `json:"fullName"`
+	Gmail    null.String `json:"email"`
+	Phone    null.String `json:"phone"`
+}
