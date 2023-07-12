@@ -26,6 +26,50 @@ func CreateStudentHttpHandler(endpoint endpoints.StudentEndpoint, router *mux.Ro
 			decodeGetByIdStudent,
 			encodeStudent,
 		)).Methods(http.MethodGet)
+
+	router.Handle("/student/{studentId}",
+		httptransport.NewServer(
+			endpoint.DeleteStudentEndpoint,
+			decodeDeleteStudent,
+			encodeStudent,
+		)).Methods(http.MethodDelete)
+
+	router.Handle("/student/{studentId}",
+		httptransport.NewServer(
+			endpoint.UpdateStudentEndpoint,
+			decodeUpdateStudent,
+			encodeStudent,
+		))
+
+	router.Handle("/students",
+		httptransport.NewServer(
+			endpoint.GetAllStudentEndpoint,
+			decodeGetStudents,
+			encodeStudent,
+		))
+}
+
+func decodeUpdateStudent(ctx context.Context, request2 *http.Request) (request interface{}, err error) {
+	return nil, err
+}
+
+func decodeGetStudents(ctx context.Context, request2 *http.Request) (request interface{}, err error) {
+	return nil, err
+}
+
+func decodeDeleteStudent(ctx context.Context, request2 *http.Request) (request interface{}, err error) {
+	vars := mux.Vars(request2)
+
+	studentId, ok := vars["studentId"]
+
+	if !ok {
+		logrus.Warnf("DecodeDeleteStudent() - error while getting vars %v", ok)
+	}
+
+	res := endpoints.StudentDeleteRequest{
+		StudentId: studentId,
+	}
+	return res, err
 }
 
 func decodeGetByIdStudent(ctx context.Context, request2 *http.Request) (request interface{}, err error) {
@@ -58,7 +102,7 @@ func decodeCreateStudent(ctx context.Context, request2 *http.Request) (request i
 	if err != nil {
 		logrus.Warnf("Decode () - Error while unmarshaling %v ", err)
 	}
-	logrus.Debugf("Decode () -transport add organization incoming object: %v", student)
+	logrus.Debugf("Decode () -transport add organization incoming object: %v", student.Student)
 
 	request = student
 	err = nil

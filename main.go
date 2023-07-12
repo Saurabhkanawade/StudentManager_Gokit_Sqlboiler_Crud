@@ -47,13 +47,10 @@ func main() {
 	}
 
 	//set log level
+	log := logrus.New()
+	log.SetFormatter(&logrus.TextFormatter{DisableQuote: true}) //this will allow for multiline stack traces
 
-	// set logging level
-	logLevel := config.GetLogLevel()
-	logrus.SetLevel(logLevel)
-	logrus.SetFormatter(&logrus.TextFormatter{DisableQuote: true}) //this will allow for multiline stack traces
-
-	studentDao := dao.NewStudentDao(dbCon)
+	studentDao := dao.NewStudentDao(dbCon, log)
 	studentService := services.NewStudentService(studentDao)
 	studentEndpoint := endpoints.MakeStudentEndpoints(studentService)
 	router := mux.NewRouter()
