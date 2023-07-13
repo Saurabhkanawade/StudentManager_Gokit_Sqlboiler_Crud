@@ -44,10 +44,10 @@ func (s studentDaoImpl) GetStudents(ctx context.Context) (dbmodels.StudentSlice,
 func (s studentDaoImpl) UpdateStudent(ctx context.Context, student dbmodels.Student) (*dbmodels.Student, error) {
 	s.Logger.Infof("Dao() - Updating the student with with new data. %v", student)
 
-	_, err := student.Update(ctx, s.con.Conn, boil.Infer())
+	studentUpdate, err := student.Update(ctx, s.con.Conn, boil.Infer())
 
 	if err != nil {
-		return nil, err
+		s.Logger.Errorf("Dao () - error while updating the student with payload %v & error is %v", studentUpdate, err)
 	}
 
 	return &student, nil

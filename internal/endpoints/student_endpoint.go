@@ -61,9 +61,9 @@ type UpdateStudentRequest struct {
 	Student   model.StudentUpdate
 }
 
-<<<<<<< HEAD
+// swagger:model EmployeeRequest
 type StudentRequest struct {
-	Id       null.String `json:"id"`
+	Id       string      `json:"id"`
 	FullName null.String `json:"fullName"`
 	Gmail    null.String `json:"email"`
 	Phone    null.String `json:"phone"`
@@ -79,46 +79,55 @@ func MakeUpdateStudentEndpoint(s services.StudentService) endpoint.Endpoint {
 		updateRequest, err := request.(StudentRequest)
 
 		if !err {
-			logrus.Errorf("Endpoint () - updating the request of updae")
+			logrus.Errorf("Endpoint () - updating the request of update")
 		}
 
+		logrus.Infof("Endpoint() - update request %v", updateRequest)
+
 		student := model.Student{
-			Id:       updateRequest.Id,
+			Id:       null.StringFrom(updateRequest.Id),
 			FullName: updateRequest.FullName,
 			Gmail:    updateRequest.Gmail,
 			Phone:    updateRequest.Phone,
 		}
 
-		UpdateStudent, _ := s.UpdateStudentById(ctx, updateRequest.Id.String, student)
+		UpdateStudentRes, updateErr := s.UpdateStudentById(ctx, updateRequest.Id, student)
+
+		if updateErr != nil {
+			logrus.Errorf("Endpoint () - error in updateStudentByID %v", err)
+		}
+
+		logrus.Debugf("Endpoint () - updated student payload %v", student)
+		logrus.Debugf("Endpoint () - updated student response %v", UpdateStudentRes)
 
 		updateStudentResponse := UpdateStudentResponse{
-			Student: *UpdateStudent,
+			Student: *UpdateStudentRes,
 		}
 		return updateStudentResponse, nil
-=======
-func MakeUpdateStudentEndpoint(s services.StudentService) endpoint.Endpoint {
-	return func(ctx context.Context, request interface{}) (interface{}, error) {
-
-		//updateRequest, err := request.(UpdateStudentRequest)
-
-		//if !err {
-		//	logrus.Errorf("Endpoint () - updating the request of updae")
-		//}
-
-		//UpdateStudent, err := s.UpdateStudentById(ctx, updateRequest.StudentId, updateRequest.Student)
-
-		return nil, nil
->>>>>>> origin/master
 	}
 }
 
-//swagger:model GetAllStudentResponse
 type GetAllStudentResponse struct {
+	Students []model.Student
+}
+
+// GetAllStudentResponseBody
+//
+//swagger:response GetAllStudentResponse
+type GetAllStudentResponseBody struct {
+	//in:body
+	Body GetAllStudentResponse `json:",inline"`
 }
 
 func MakeGetAllStudentEndpoint(s services.StudentService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (response interface{}, err error) {
-		return nil, err
+		allStudents, err := s.GetAllStudent(ctx)
+		logrus.Infof("Endpoint () - getall student %v", allStudents)
+
+		res := GetAllStudentResponse{
+			Students: allStudents,
+		}
+		return res, nil
 	}
 }
 

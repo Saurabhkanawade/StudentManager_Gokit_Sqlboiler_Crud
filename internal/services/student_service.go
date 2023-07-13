@@ -5,6 +5,7 @@ import (
 	"github.com/saurabhkanawade/studentmanager/internal/dao"
 	"github.com/saurabhkanawade/studentmanager/model"
 	"github.com/sirupsen/logrus"
+	"github.com/volatiletech/null/v8"
 )
 
 type StudentService interface {
@@ -21,46 +22,52 @@ type StudentServiceImpl struct {
 
 func (s StudentServiceImpl) GetAllStudent(ctx context.Context) ([]model.Student, error) {
 	s.Logger.Debugf("Service() - fetching all the students.")
+
+	var students []model.Student
 	studentsResponse, err := s.dao.GetStudents(ctx)
 
 	if err != nil {
-		s.Logger.Errorf("Service")
+		s.Logger.Errorf("Service() - nill student found %v response is %v", err, studentsResponse)
 	}
 
-	students := make([]model.Student, len(studentsResponse))
+	//Setting all employees to model (model to db list conversion)
 
-	for i := range studentsResponse {
-		students[i] = model.DbToModel(*studentsResponse[i])
+	for _, emp := range studentsResponse {
+		modelStudent := model.Student{
+			Id:       null.StringFrom(emp.ID),
+			FullName: emp.Fullname,
+			Gmail:    emp.Gmail,
+			Phone:    emp.Phone,
+		}
+		students = append(students, modelStudent)
 	}
-
+	s.Logger.Debugf("Service () - list of student return %v", students)
 	return students, nil
 }
 
-func (s StudentServiceImpl) UpdateStudentById(ctx context.Context, studentId string, updateStudent model.Student) (*model.Student, error) {
-	s.Logger.Debugf("Service() - Updating the student with studentId :%v", studentId)
-	//getstudent
+func (s *StudentServiceImpl) UpdateStudentById(ctx context.Context, studentId string, updateStudent model.Student) (*model.Student, error) {
+	logrus.Debugf("Service() - Updating the student with studentId :%v", studentId)
 
-	existingStudent, err := s.GetStudentById(ctx, studentId)
+	getExistingStudent, err := s.GetStudentById(ctx, studentId)
 
 	if err != nil {
-		s.Logger.Errorf("Service () - nill student found with the id %v", studentId)
+		s.Logger.Errorf("Service () - nill student found with studentId %v ", studentId)
 	}
-	//setting up the updated student to payload
 
-	student := existingStudent
+	student := getExistingStudent
+
+	student.Id = updateStudent.Id
 	student.FullName = updateStudent.FullName
 	student.Gmail = updateStudent.Gmail
 	student.Phone = updateStudent.Phone
 
-	//conversion of the model to db
+	studentDbModel := student.ModelToDb()
 
-	modelToDb := student.ModelToDb()
+	reqUpdate, _ := s.dao.UpdateStudent(ctx, studentDbModel)
 
-	reqUpdate, err := s.dao.UpdateStudent(ctx, modelToDb)
+	studentModelToDb := model.DbToModel(*reqUpdate)
 
-	dbToModel := model.DbToModel(*reqUpdate)
-
-	return &dbToModel, nil
+	return &studentModelToDb, nil
 }
 
 func (s StudentServiceImpl) DeleteStudentById(ctx context.Context, studentId string) (string, studentIds string) {
@@ -96,8 +103,9 @@ func (s StudentServiceImpl) CreateStudent(ctx context.Context, student model.Stu
 	return &student, nil
 }
 
-func NewStudentService(studentDao dao.Student) StudentService {
+func NewStudentService(studentDao dao.Student, log *logrus.Logger) StudentService {
 	return &StudentServiceImpl{
-		dao: studentDao,
+		dao:    studentDao,
+		Logger: *log,
 	}
 }

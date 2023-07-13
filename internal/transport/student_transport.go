@@ -6,6 +6,7 @@ import (
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
 	"github.com/saurabhkanawade/studentmanager/internal/endpoints"
+	"github.com/saurabhkanawade/studentmanager/model"
 	"github.com/sirupsen/logrus"
 	"io"
 	"net/http"
@@ -20,21 +21,21 @@ func CreateStudentHttpHandler(endpoint endpoints.StudentEndpoint, router *mux.Ro
 			encodeStudent,
 		)).Methods(http.MethodPost)
 
-	router.Handle("/student/{studentId}",
+	router.Handle("/students/{studentId}",
 		httptransport.NewServer(
 			endpoint.GetStudentEndpoint,
 			decodeGetByIdStudent,
 			encodeStudent,
 		)).Methods(http.MethodGet)
 
-	router.Handle("/student/{studentId}",
+	router.Handle("/students/{studentId}",
 		httptransport.NewServer(
 			endpoint.DeleteStudentEndpoint,
 			decodeDeleteStudent,
 			encodeStudent,
 		)).Methods(http.MethodDelete)
 
-	router.Handle("/student/{studentId}",
+	router.Handle("/students/{studentId}",
 		httptransport.NewServer(
 			endpoint.UpdateStudentEndpoint,
 			decodeUpdateStudent,
@@ -50,11 +51,38 @@ func CreateStudentHttpHandler(endpoint endpoints.StudentEndpoint, router *mux.Ro
 }
 
 func decodeUpdateStudent(ctx context.Context, request2 *http.Request) (request interface{}, err error) {
-	return nil, err
+	logrus.Info("Decode with update request")
+	var student endpoints.StudentRequest
+
+	vars := mux.Vars(request2)
+
+	studentId, ok := vars["studentId"]
+	logrus.Infof("Decode () - update the request with studentId %v", studentId)
+	if !ok {
+		logrus.Warnf("DecodeDeleteStudent() - error while getting vars %v", ok)
+	}
+	body, err := io.ReadAll(request2.Body)
+
+	err = json.Unmarshal(body, &student)
+
+	//student.Id = null.StringFrom(studentId)
+
+	if err != nil {
+		logrus.Warnf("Decode () - Error while unmarshaling %v ", err)
+	}
+	logrus.Debugf("Decode () -transport add organization incoming object: %v")
+
+	return endpoints.StudentRequest{
+		Id:       student.Id,
+		FullName: student.FullName,
+		Gmail:    student.Gmail,
+		Phone:    student.Phone,
+	}, nil
 }
 
 func decodeGetStudents(ctx context.Context, request2 *http.Request) (request interface{}, err error) {
-	return nil, err
+	var student model.Student
+	return student, err
 }
 
 func decodeDeleteStudent(ctx context.Context, request2 *http.Request) (request interface{}, err error) {

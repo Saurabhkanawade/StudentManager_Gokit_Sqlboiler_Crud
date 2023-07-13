@@ -51,7 +51,7 @@ func main() {
 	log.SetFormatter(&logrus.TextFormatter{DisableQuote: true}) //this will allow for multiline stack traces
 
 	studentDao := dao.NewStudentDao(dbCon, log)
-	studentService := services.NewStudentService(studentDao)
+	studentService := services.NewStudentService(studentDao, log)
 	studentEndpoint := endpoints.MakeStudentEndpoints(studentService)
 	router := mux.NewRouter()
 	transport.CreateStudentHttpHandler(studentEndpoint, router)
