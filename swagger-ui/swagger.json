@@ -1,0 +1,267 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "# Endpoints for student\n\nStudentManager",
+    "title": "service API.",
+    "version": "0.0.1"
+  },
+  "host": "localhost:8001",
+  "basePath": "/",
+  "paths": {
+    "/students": {
+      "get": {
+        "tags": [
+          "student"
+        ],
+        "summary": "Returns all student",
+        "operationId": "getAllStudent",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetAllStudentResponseBody"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "student"
+        ],
+        "summary": "Creates an new student",
+        "operationId": "createStudent",
+        "parameters": [
+          {
+            "description": "the organization to create student",
+            "name": "student",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateStudentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/createStudentResponse"
+          }
+        }
+      }
+    },
+    "/students/{studentId}": {
+      "get": {
+        "tags": [
+          "student"
+        ],
+        "summary": "Returns the student with the provided ID",
+        "operationId": "getStudentId",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "the student to get",
+            "name": "studentId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetStudentByIdResponseBody"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "student"
+        ],
+        "summary": "Updates an student",
+        "operationId": "updateStudent",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "The existing student to update",
+            "name": "studentId",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "the student to update",
+            "name": "student",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/StudentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "$ref": "#/responses/UpdateStudentResponse"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "student"
+        ],
+        "summary": "Deletes an student",
+        "operationId": "deleteStudent",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "The student to delete",
+            "name": "studentId",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/DeleteStudentResponse"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "CreateStudentRequest": {
+      "type": "object",
+      "properties": {
+        "student": {
+          "$ref": "#/definitions/CreateStudentRequestBody"
+        }
+      },
+      "x-go-package": "github.com/saurabhkanawade/studentmanager/internal/endpoints"
+    },
+    "CreateStudentRequestBody": {
+      "type": "object",
+      "properties": {
+        "fullName": {
+          "$ref": "#/definitions/String"
+        },
+        "gmail": {
+          "$ref": "#/definitions/String"
+        },
+        "id": {
+          "$ref": "#/definitions/String"
+        },
+        "phone": {
+          "$ref": "#/definitions/String"
+        }
+      },
+      "x-go-package": "github.com/saurabhkanawade/studentmanager/internal/endpoints"
+    },
+    "GetAllStudentResponse": {
+      "type": "object",
+      "properties": {
+        "Students": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Student"
+          }
+        }
+      },
+      "x-go-package": "github.com/saurabhkanawade/studentmanager/internal/endpoints"
+    },
+    "String": {
+      "type": "object",
+      "title": "String is a nullable string. It supports SQL and JSON serialization.",
+      "properties": {
+        "String": {
+          "type": "string"
+        },
+        "Valid": {
+          "type": "boolean"
+        }
+      },
+      "x-go-package": "github.com/volatiletech/null/v8"
+    },
+    "Student": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "$ref": "#/definitions/String"
+        },
+        "fullName": {
+          "$ref": "#/definitions/String"
+        },
+        "id": {
+          "$ref": "#/definitions/String"
+        },
+        "phone": {
+          "$ref": "#/definitions/String"
+        }
+      },
+      "x-go-package": "github.com/saurabhkanawade/studentmanager/model"
+    },
+    "StudentRequest": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "$ref": "#/definitions/String"
+        },
+        "fullName": {
+          "$ref": "#/definitions/String"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "Id"
+        },
+        "phone": {
+          "$ref": "#/definitions/String"
+        }
+      },
+      "x-go-package": "github.com/saurabhkanawade/studentmanager/internal/endpoints"
+    },
+    "createResponseBody": {
+      "type": "object",
+      "properties": {
+        "student": {
+          "$ref": "#/definitions/Student"
+        }
+      },
+      "x-go-package": "github.com/saurabhkanawade/studentmanager/internal/endpoints"
+    }
+  },
+  "responses": {
+    "DeleteStudentResponse": {
+      "description": "DeleteStudentResponse",
+      "headers": {
+        "StudentId": {
+          "type": "string"
+        }
+      }
+    },
+    "GetAllStudentResponseBody": {
+      "description": "GetAllStudentResponseBody",
+      "schema": {
+        "$ref": "#/definitions/GetAllStudentResponse"
+      }
+    },
+    "GetStudentByIdResponseBody": {
+      "description": "GetStudentByIdResponseBody",
+      "schema": {
+        "$ref": "#/definitions/Student"
+      }
+    },
+    "UpdateStudentResponse": {
+      "description": "UpdateStudentResponse",
+      "schema": {
+        "$ref": "#/definitions/Student"
+      }
+    },
+    "createStudentResponse": {
+      "description": "createStudentResponse",
+      "schema": {
+        "$ref": "#/definitions/createResponseBody"
+      }
+    }
+  }
+}
