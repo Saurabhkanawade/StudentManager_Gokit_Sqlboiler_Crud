@@ -1,3 +1,21 @@
+// Package student service API.
+//
+// # Endpoints for student
+//
+//	 StudentManager
+//
+//		Schemes: http , https
+//		Host: localhost:8001
+//		BasePath: /
+//		Version: 0.0.1
+//
+// Consumes:
+// - application/json
+//
+// Produces:
+// - application/json
+//
+// swagger:meta
 package main
 
 import (
@@ -45,6 +63,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error pinging portals database: %s", err.Error())
 	}
+	router := mux.NewRouter()
+
+	fs := http.FileServer(http.Dir("./swagger-ui"))
+	router.PathPrefix("/swagger-ui").
+		Handler(http.StripPrefix("/swagger-ui", fs))
 
 	//set log level
 	log := logrus.New()
@@ -53,7 +76,6 @@ func main() {
 	studentDao := dao.NewStudentDao(dbCon, log)
 	studentService := services.NewStudentService(studentDao, log)
 	studentEndpoint := endpoints.MakeStudentEndpoints(studentService)
-	router := mux.NewRouter()
 	transport.CreateStudentHttpHandler(studentEndpoint, router)
 
 	startServer(router)

@@ -31,6 +31,8 @@ type StudentDeleteRequest struct {
 	StudentId string
 }
 
+// DeleteStudentResponse
+// swagger:response DeleteStudentResponse
 type DeleteStudentResponse struct {
 	StudentId string
 }
@@ -61,7 +63,7 @@ type UpdateStudentRequest struct {
 	Student   model.StudentUpdate
 }
 
-// swagger:model EmployeeRequest
+// swagger:model StudentRequest
 type StudentRequest struct {
 	Id       string      `json:"id"`
 	FullName null.String `json:"fullName"`
@@ -69,7 +71,10 @@ type StudentRequest struct {
 	Phone    null.String `json:"phone"`
 }
 
+// UpdateStudentResponse
+// swagger:response UpdateStudentResponse
 type UpdateStudentResponse struct {
+	//in:body
 	Student model.Student `json:"student"`
 }
 
@@ -113,7 +118,7 @@ type GetAllStudentResponse struct {
 
 // GetAllStudentResponseBody
 //
-//swagger:response GetAllStudentResponse
+//swagger:response GetAllStudentResponseBody
 type GetAllStudentResponseBody struct {
 	//in:body
 	Body GetAllStudentResponse `json:",inline"`
@@ -131,7 +136,6 @@ func MakeGetAllStudentEndpoint(s services.StudentService) endpoint.Endpoint {
 	}
 }
 
-// swagger:model GetStudentRequest
 type GetStudentByIdRequest struct {
 	StudentId string
 }

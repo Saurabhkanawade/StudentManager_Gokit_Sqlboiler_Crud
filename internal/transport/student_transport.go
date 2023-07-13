@@ -14,13 +14,38 @@ import (
 
 func CreateStudentHttpHandler(endpoint endpoints.StudentEndpoint, router *mux.Router) {
 
-	router.Handle("/student",
+	// swagger:operation POST /students student createStudent
+	// ---
+	// summary: Creates an new student
+	// parameters:
+	// - name: student
+	//   in: body
+	//   description: the organization to create student
+	//   schema:
+	//     "$ref": "#/definitions/CreateStudentRequest"
+	//   required: true
+	// responses:
+	//   "201":
+	//     "$ref": "#/responses/createStudentResponse"
+	router.Handle("/students",
 		httptransport.NewServer(
 			endpoint.CreateStudentEndpoint,
 			decodeCreateStudent,
 			encodeStudent,
 		)).Methods(http.MethodPost)
 
+	// swagger:operation GET /students/{studentId} student getStudentId
+	//---
+	// summary: Returns the student with the provided ID
+	// parameters:
+	// - name: studentId
+	//   in: path
+	//   description: the student to get
+	//   type: string
+	//   required: true
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/GetStudentByIdResponseBody"
 	router.Handle("/students/{studentId}",
 		httptransport.NewServer(
 			endpoint.GetStudentEndpoint,
@@ -28,6 +53,18 @@ func CreateStudentHttpHandler(endpoint endpoints.StudentEndpoint, router *mux.Ro
 			encodeStudent,
 		)).Methods(http.MethodGet)
 
+	// swagger:operation DELETE /students/{studentId} student deleteStudent
+	// ---
+	// summary: Deletes an student
+	// parameters:
+	// - name: studentId
+	//   in: path
+	//   description: The student to delete
+	//   type: string
+	//   required: true
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/DeleteStudentResponse"
 	router.Handle("/students/{studentId}",
 		httptransport.NewServer(
 			endpoint.DeleteStudentEndpoint,
@@ -35,6 +72,24 @@ func CreateStudentHttpHandler(endpoint endpoints.StudentEndpoint, router *mux.Ro
 			encodeStudent,
 		)).Methods(http.MethodDelete)
 
+	// swagger:operation PUT /students/{studentId} student updateStudent
+	// ---
+	// summary: Updates an student
+	// parameters:
+	// - name: studentId
+	//   in: path
+	//   description: The existing student to update
+	//   type: string
+	//   required: true
+	// - name: student
+	//   in: body
+	//   description: the student to update
+	//   schema:
+	//     "$ref": "#/definitions/StudentRequest"
+	//   required: true
+	// responses:
+	//   "201":
+	//     "$ref": "#/responses/UpdateStudentResponse"
 	router.Handle("/students/{studentId}",
 		httptransport.NewServer(
 			endpoint.UpdateStudentEndpoint,
@@ -42,6 +97,12 @@ func CreateStudentHttpHandler(endpoint endpoints.StudentEndpoint, router *mux.Ro
 			encodeStudent,
 		))
 
+	// swagger:operation GET /students student getAllStudent
+	// ---
+	// summary: Returns all student
+	// responses:
+	//   "200":
+	//     "$ref": "#/responses/GetAllStudentResponseBody"
 	router.Handle("/students",
 		httptransport.NewServer(
 			endpoint.GetAllStudentEndpoint,
