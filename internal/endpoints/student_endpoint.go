@@ -65,10 +65,10 @@ type UpdateStudentRequest struct {
 
 // swagger:model StudentRequest
 type StudentRequest struct {
-	Id       string      `json:"id"`
-	FullName null.String `json:"fullName"`
-	Gmail    null.String `json:"email"`
-	Phone    null.String `json:"phone"`
+	Id       string `json:"id"`
+	FullName string `json:"fullName"`
+	Gmail    string `json:"email"`
+	Phone    string `json:"phone"`
 }
 
 // UpdateStudentResponse
@@ -91,9 +91,9 @@ func MakeUpdateStudentEndpoint(s services.StudentService) endpoint.Endpoint {
 
 		student := model.Student{
 			Id:       null.StringFrom(updateRequest.Id),
-			FullName: updateRequest.FullName,
-			Gmail:    updateRequest.Gmail,
-			Phone:    updateRequest.Phone,
+			FullName: null.StringFrom(updateRequest.FullName),
+			Gmail:    null.StringFrom(updateRequest.Gmail),
+			Phone:    null.StringFrom(updateRequest.Phone),
 		}
 
 		UpdateStudentRes, updateErr := s.UpdateStudentById(ctx, updateRequest.Id, student)
@@ -177,10 +177,10 @@ type CreateStudentRequest struct {
 }
 
 type CreateStudentRequestBody struct {
-	Id       null.String `json:"id"`
-	FullName null.String `json:"fullName"`
-	Gmail    null.String `json:"gmail"`
-	Phone    null.String `json:"phone"`
+	Id       string `json:"id"`
+	FullName string `json:"fullName"`
+	Gmail    string `json:"gmail"`
+	Phone    string `json:"phone"`
 }
 
 type createResponseBody struct {
@@ -203,10 +203,10 @@ func MakeCreateStudentEndpoint(s services.StudentService) endpoint.Endpoint {
 			logrus.Warnf("Endpoint () - nill request %v:", req)
 		}
 		student := model.Student{
-			Id:       req.Student.Id,
-			FullName: req.Student.FullName,
-			Gmail:    req.Student.Gmail,
-			Phone:    req.Student.Phone,
+			Id:       null.StringFrom(req.Student.Id),
+			FullName: null.StringFrom(req.Student.FullName),
+			Gmail:    null.StringFrom(req.Student.Gmail),
+			Phone:    null.StringFrom(req.Student.Phone),
 		}
 		serviceReq, errService := s.CreateStudent(ctx, student)
 

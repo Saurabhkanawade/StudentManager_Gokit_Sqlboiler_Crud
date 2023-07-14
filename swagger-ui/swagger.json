@@ -144,16 +144,20 @@
       "type": "object",
       "properties": {
         "fullName": {
-          "$ref": "#/definitions/String"
+          "type": "string",
+          "x-go-name": "FullName"
         },
         "gmail": {
-          "$ref": "#/definitions/String"
+          "type": "string",
+          "x-go-name": "Gmail"
         },
         "id": {
-          "$ref": "#/definitions/String"
+          "type": "string",
+          "x-go-name": "Id"
         },
         "phone": {
-          "$ref": "#/definitions/String"
+          "type": "string",
+          "x-go-name": "Phone"
         }
       },
       "x-go-package": "github.com/saurabhkanawade/studentmanager/internal/endpoints"
@@ -205,17 +209,20 @@
       "type": "object",
       "properties": {
         "email": {
-          "$ref": "#/definitions/String"
+          "type": "string",
+          "x-go-name": "Gmail"
         },
         "fullName": {
-          "$ref": "#/definitions/String"
+          "type": "string",
+          "x-go-name": "FullName"
         },
         "id": {
           "type": "string",
           "x-go-name": "Id"
         },
         "phone": {
-          "$ref": "#/definitions/String"
+          "type": "string",
+          "x-go-name": "Phone"
         }
       },
       "x-go-package": "github.com/saurabhkanawade/studentmanager/internal/endpoints"
